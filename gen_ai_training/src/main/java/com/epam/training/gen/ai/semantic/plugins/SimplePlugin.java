@@ -15,7 +15,7 @@ public class SimplePlugin {
     @DefineKernelFunction(name = "makeSimpleAction", description = "Makes a simple action on data.")
     public String getBingSearchUrl(
             @KernelFunctionParameter(description = "Data on which to do action", name = "query") String query) {
-        //log.info("Simple plugin was called with query: [{}]", query);
+        log.info("Simple plugin was called with query: [{}]", query);
         return query;
     }
 }

@@ -2,22 +2,25 @@ package com.epam.training.gen.ai.chat.controller;
 
 import com.epam.training.gen.ai.chat.prompt.SimplePromptService;
 import io.netty.util.internal.StringUtil;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import jakarta.websocket.server.PathParam;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@RequestMapping("/chatapplicaiton")
 public class ChatController {
 
+    @Autowired
     private SimplePromptService simplePromptService;
 
-    public Object message(@RequestParam String message) {
-        if(StringUtil.isNullOrEmpty(message)) {
-            return "Empty user message";
+    @GetMapping("/message")
+    public String message(@RequestParam(required = false) String text) {
+        if(StringUtil.isNullOrEmpty(text)) {
+            return "Empty user input";
         }
-        String response = simplePromptService.getChatCompletions(message);
+        String response = simplePromptService.getChatCompletions(text);
         return response;
     }
 }

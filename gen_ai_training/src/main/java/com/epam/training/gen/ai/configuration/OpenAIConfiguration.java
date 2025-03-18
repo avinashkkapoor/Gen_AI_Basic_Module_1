@@ -20,7 +20,7 @@ public class OpenAIConfiguration {
     @Value("${client-azureopenai-key}")
     private String AZURE_OPEN_AI_KEY;
 
-    @Value("${AZURE_OPEN_AI_ENDPOINT}")
+    @Value("${client-azureopenai-endpoint}")
     private String AZURE_OPEN_AI_ENDPOINT;
     /**
      * Creates an {@link OpenAIAsyncClient} bean for interacting with Azure OpenAI Service asynchronously.

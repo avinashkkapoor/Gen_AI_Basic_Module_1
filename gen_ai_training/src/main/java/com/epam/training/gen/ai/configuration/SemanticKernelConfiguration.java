@@ -3,7 +3,7 @@ package com.epam.training.gen.ai.configuration;
 import com.azure.ai.openai.OpenAIAsyncClient;
 import com.epam.training.gen.ai.semantic.plugins.SimplePlugin;
 import com.microsoft.semantickernel.Kernel;
-//import com.microsoft.semantickernel.aiservices.openai.chatcompletion.OpenAIChatCompletion;
+import com.microsoft.semantickernel.aiservices.openai.chatcompletion.OpenAIChatCompletion;
 import com.microsoft.semantickernel.orchestration.InvocationContext;
 import com.microsoft.semantickernel.orchestration.PromptExecutionSettings;
 import com.microsoft.semantickernel.plugin.KernelPlugin;
@@ -36,11 +36,10 @@ public class SemanticKernelConfiguration {
     @Bean
     public ChatCompletionService chatCompletionService(@Value("${client-azureopenai-deployment-name}") String deploymentOrModelName,
                                                        OpenAIAsyncClient openAIAsyncClient) {
-        /*return OpenAIChatCompletion.builder()
+        return OpenAIChatCompletion.builder()
                 .withModelId(deploymentOrModelName)
                 .withOpenAIAsyncClient(openAIAsyncClient)
-                .build();*/
-        return null;
+                .build();
     }
 
     /**
