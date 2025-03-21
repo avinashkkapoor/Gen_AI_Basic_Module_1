@@ -1,27 +1,35 @@
 package com.epam.training.gen.ai.chat.controller;
 
-import com.epam.training.gen.ai.chat.prompt.SimplePromptService;
+import com.epam.training.gen.ai.chat.model.ChatRequest;
+import com.epam.training.gen.ai.chat.model.ChatResponse;
+import com.epam.training.gen.ai.chat.prompt.PromptServiceImpl;
 import io.netty.util.internal.StringUtil;
-import jakarta.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/chatapplicaiton")
 public class ChatController {
 
     @Autowired
-    private SimplePromptService simplePromptService;
+    private PromptServiceImpl promptService;
 
     @GetMapping("/message")
-    public String message(@RequestParam(required = false) String text) {
+    public ResponseEntity message(@RequestParam(required = false) String text) {
         if(StringUtil.isNullOrEmpty(text)) {
-            return "Empty user input";
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad requst");
         }
-        String response = simplePromptService.getChatCompletions(text);
-        return response;
+
+        ChatResponse response = new ChatResponse(text, promptService.getChatCompletions(text));
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/messageWithTemp")
+    public ResponseEntity<ChatResponse> messageWithTemp(@RequestBody ChatRequest chatRequest) {
+        ChatResponse chatResponse = promptService.getChatCompletionsWithTemp(chatRequest);
+        return new ResponseEntity<>(chatResponse, HttpStatus.OK);
     }
 }
 
