@@ -1,4 +1,4 @@
 package com.epam.training.gen.ai.chat.model;
 
-public record ChatRequest(String question, String temperature) {
+public record ChatRequest(String question, String temperature, String model) {
 }

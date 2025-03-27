@@ -31,5 +31,11 @@ public class ChatController {
         ChatResponse chatResponse = promptService.getChatCompletionsWithTemp(chatRequest);
         return new ResponseEntity<>(chatResponse, HttpStatus.OK);
     }
+
+    @PostMapping("/messageWithModel")
+    public ResponseEntity<ChatResponse> messageWithModel(@RequestBody ChatRequest chatRequest) {
+        ChatResponse chatResponse = promptService.getChatCompletionsWithModel(chatRequest);
+        return new ResponseEntity<>(chatResponse, HttpStatus.OK);
+    }
 }
 
