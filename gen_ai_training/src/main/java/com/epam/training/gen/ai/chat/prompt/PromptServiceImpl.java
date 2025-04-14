@@ -3,10 +3,12 @@ package com.epam.training.gen.ai.chat.prompt;
 import com.azure.ai.openai.OpenAIAsyncClient;
 import com.epam.training.gen.ai.chat.model.ChatRequest;
 import com.epam.training.gen.ai.chat.model.ChatResponse;
+import com.epam.training.gen.ai.semantic.plugins.CurrencyExchangePlugin;
 import com.microsoft.semantickernel.Kernel;
 import com.microsoft.semantickernel.aiservices.openai.chatcompletion.OpenAIChatCompletion;
 import com.microsoft.semantickernel.orchestration.InvocationContext;
 import com.microsoft.semantickernel.orchestration.PromptExecutionSettings;
+import com.microsoft.semantickernel.plugin.KernelPluginFactory;
 import com.microsoft.semantickernel.services.chatcompletion.AuthorRole;
 import com.microsoft.semantickernel.services.chatcompletion.ChatCompletionService;
 import com.microsoft.semantickernel.services.chatcompletion.ChatHistory;
@@ -14,7 +16,6 @@ import com.microsoft.semantickernel.services.chatcompletion.ChatMessageContent;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -119,6 +120,33 @@ public class PromptServiceImpl implements PromptService {
         return new ChatResponse(chatRequest.question(), response);
     }
 
+    @Override
+    public ChatResponse getCurrencyExchange(ChatRequest chatRequest) {
+        ChatHistory chatHistory = new ChatHistory();
+        chatHistory.addUserMessage(chatRequest.question());
+        double temperature = Double.parseDouble(chatRequest.temperature());
+
+        //Use for temperature
+        InvocationContext invocationContext1 = InvocationContext.builder().withPromptExecutionSettings(PromptExecutionSettings.builder().withTemperature(temperature).build()).build();
+
+        ChatCompletionService service = chatCompletionServiceWithModel(chatRequest.model());
+        List<ChatMessageContent<?>> results = service
+                .getChatMessageContentsAsync(chatHistory, getKernel(service), invocationContext1)
+                .block();
+        String response =
+                results.stream()
+                        .filter(
+                                chatMessageContent ->
+                                        chatMessageContent.getAuthorRole() == AuthorRole.ASSISTANT
+                                                && chatMessageContent.getContent() != null)
+                        .map(ChatMessageContent::getContent)
+                        .findFirst().get();
+
+        //Adding chat history
+        chatHistory.addAssistantMessage(response);
+        return new ChatResponse(chatRequest.question(), response);
+    }
+
     /**
      * We will get Chat completion service based on model argument
      * @param deploymentModelName
@@ -130,4 +158,13 @@ public class PromptServiceImpl implements PromptService {
                 .withOpenAIAsyncClient(openAIAsyncClient)
                 .build();
     }
+
+
+    public Kernel getKernel(ChatCompletionService chatCompletionService) {
+        return Kernel.builder()
+                .withAIService(ChatCompletionService.class, chatCompletionService)
+                .withPlugin(KernelPluginFactory.createFromObject(new CurrencyExchangePlugin(), "CurrencyExchange"))
+                .build();
+    }
+
 }

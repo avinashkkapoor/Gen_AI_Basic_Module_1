@@ -1,11 +1,14 @@
 package com.epam.training.gen.ai.configuration;
 
 import com.azure.ai.openai.OpenAIAsyncClient;
+import com.epam.training.gen.ai.semantic.plugins.CurrencyExchangePlugin;
 import com.epam.training.gen.ai.semantic.plugins.SimplePlugin;
 import com.microsoft.semantickernel.Kernel;
 import com.microsoft.semantickernel.aiservices.openai.chatcompletion.OpenAIChatCompletion;
 import com.microsoft.semantickernel.orchestration.InvocationContext;
+import com.microsoft.semantickernel.orchestration.InvocationReturnMode;
 import com.microsoft.semantickernel.orchestration.PromptExecutionSettings;
+import com.microsoft.semantickernel.orchestration.ToolCallBehavior;
 import com.microsoft.semantickernel.plugin.KernelPlugin;
 import com.microsoft.semantickernel.plugin.KernelPluginFactory;
 import com.microsoft.semantickernel.services.chatcompletion.ChatCompletionService;
@@ -25,6 +28,9 @@ import java.util.Map;
  */
 @Configuration
 public class SemanticKernelConfiguration {
+
+    public static final double DEFAULT_TEMPERATURE = 0.5;
+
 
     /**
      * Creates a {@link ChatCompletionService} bean for handling chat completions using Azure OpenAI.
@@ -76,6 +82,7 @@ public class SemanticKernelConfiguration {
     @Bean
     public InvocationContext invocationContext() {
         return InvocationContext.builder()
+                .withReturnMode(InvocationReturnMode.LAST_MESSAGE_ONLY)
                 .withPromptExecutionSettings(PromptExecutionSettings.builder()
                         .withTemperature(1.0)
                         .build())
@@ -94,6 +101,15 @@ public class SemanticKernelConfiguration {
         return Map.of(deploymentOrModelName, PromptExecutionSettings.builder()
                 .withTemperature(1.0)
                 .build());
+    }
+
+    @Bean
+    public Kernel kernel(ChatCompletionService chatCompletionService) {
+            return Kernel.builder()
+                    .withAIService(ChatCompletionService.class, chatCompletionService)
+                    .withPlugin(KernelPluginFactory.createFromObject(new SimplePlugin(), "Mood"))
+                    .withPlugin(KernelPluginFactory.createFromObject(new CurrencyExchangePlugin(), "CurrencyExchange"))
+                    .build();
     }
 }
 

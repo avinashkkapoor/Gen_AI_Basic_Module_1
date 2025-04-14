@@ -7,4 +7,5 @@ public interface PromptService {
     public String getChatCompletions(String questions);
     public ChatResponse getChatCompletionsWithTemp(ChatRequest chatRequest);
     public ChatResponse getChatCompletionsWithModel(ChatRequest chatRequest);
+    public ChatResponse getCurrencyExchange(ChatRequest chatRequest);
 }
