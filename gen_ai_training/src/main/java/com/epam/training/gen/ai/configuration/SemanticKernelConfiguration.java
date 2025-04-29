@@ -102,14 +102,14 @@ public class SemanticKernelConfiguration {
                 .withTemperature(1.0)
                 .build());
     }
-
-    @Bean
-    public Kernel kernel(ChatCompletionService chatCompletionService) {
-            return Kernel.builder()
-                    .withAIService(ChatCompletionService.class, chatCompletionService)
-                    .withPlugin(KernelPluginFactory.createFromObject(new SimplePlugin(), "Mood"))
-                    .withPlugin(KernelPluginFactory.createFromObject(new CurrencyExchangePlugin(), "CurrencyExchange"))
-                    .build();
-    }
+//
+//    @Bean
+//    public Kernel kernel(ChatCompletionService chatCompletionService) {
+//            return Kernel.builder()
+//                    .withAIService(ChatCompletionService.class, chatCompletionService)
+//                    .withPlugin(KernelPluginFactory.createFromObject(new SimplePlugin(), "Mood"))
+//                    .withPlugin(KernelPluginFactory.createFromObject(new CurrencyExchangePlugin(), "CurrencyExchange"))
+//                    .build();
+//    }
 }
 
