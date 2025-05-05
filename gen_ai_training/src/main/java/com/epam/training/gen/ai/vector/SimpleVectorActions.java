@@ -28,7 +28,7 @@ import static io.qdrant.client.WithPayloadSelectorFactory.enable;
 @Service
 @AllArgsConstructor
 public class SimpleVectorActions {
-    private static final String COLLECTION_NAME = "genaibootcamptask05";
+    private static final String COLLECTION_NAME = "genaibootcamptask06";
     private final OpenAIAsyncClient openAIAsyncClient;
     private final QdrantClient qdrantClient;
 
